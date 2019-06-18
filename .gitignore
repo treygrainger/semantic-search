@@ -1,1 +1,4 @@
 app/semantic-search.zip
+/bin/*.zip
+/*.gz
+/fusion

@@ -5,5 +5,5 @@
  "/semantic":{
       "name":"/semantic",
       "class":"solr.DumpRequestHandler",
-      "defaults":{"wt":"velocity", "v.template": "tag"}}}
+      "defaults":{"wt":"velocity", "v.template": "semantic"}}}
 }
