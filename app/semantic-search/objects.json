@@ -1,0 +1,1485 @@
+{
+  "objects" : {
+    "collections" : [ {
+      "id" : "places",
+      "createdAt" : "2019-04-21T03:44:17.682Z",
+      "searchClusterId" : "default",
+      "commitWithin" : 10000,
+      "solrParams" : {
+        "name" : "places",
+        "numShards" : 1,
+        "replicationFactor" : 1
+      },
+      "type" : "DATA",
+      "metadata" : { }
+    },
+    {
+      "id" : "entities",
+      "createdAt" : "2019-03-23T15:17:32.176Z",
+      "searchClusterId" : "default",
+      "commitWithin" : 10000,
+      "solrParams" : {
+        "name" : "entities",
+        "numShards" : 1,
+        "replicationFactor" : 1
+      },
+      "type" : "DATA",
+      "metadata" : { }
+    } ],
+    "indexPipelines" : [ {
+      "id" : "places-manual",
+      "stages" : [ {
+        "type" : "field-mapping",
+        "id" : "a6c71ca1-6b61-4803-93f3-edcb006d0232",
+        "mappings" : [ {
+          "source" : "coordinates",
+          "target" : "coordinates_pt",
+          "operation" : "move"
+        }, {
+          "source" : "coordinates_pt",
+          "target" : "coordinates_s",
+          "operation" : "copy"
+        }, {
+          "source" : "description",
+          "target" : "text_t",
+          "operation" : "copy"
+        } ],
+        "reservedFieldsMappingAllowed" : false,
+        "type" : "field-mapping",
+        "skip" : false,
+        "licensed" : true,
+        "secretSourceStageId" : "a6c71ca1-6b61-4803-93f3-edcb006d0232"
+      }, {
+        "type" : "solr-dynamic-field-name-mapping",
+        "id" : "58f3d8b9-d3a7-47b4-a8fd-650b3238d107",
+        "duplicateSingleValuedFields" : false,
+        "fieldsToExclude" : [ ],
+        "advancedTextFieldsIndexing" : true,
+        "maxTextLengthForAdvancedIndexing" : 100,
+        "type" : "solr-dynamic-field-name-mapping",
+        "skip" : false,
+        "licensed" : true,
+        "secretSourceStageId" : "58f3d8b9-d3a7-47b4-a8fd-650b3238d107"
+      }, {
+        "type" : "solr-index",
+        "id" : "050efada-3f26-40fe-9104-10485bfa9b8b",
+        "enforceSchema" : true,
+        "dateFormats" : [ ],
+        "params" : [ ],
+        "bufferDocsForSolr" : false,
+        "type" : "solr-index",
+        "skip" : false,
+        "licensed" : true,
+        "secretSourceStageId" : "050efada-3f26-40fe-9104-10485bfa9b8b"
+      } ],
+      "properties" : {
+        "secretSourcePipelineId" : "places-manual"
+      }
+    }, {
+      "id" : "places",
+      "stages" : [ {
+        "type" : "field-mapping",
+        "id" : "623bab7d-680e-45c8-83b3-a36c140683b5",
+        "mappings" : [ {
+          "source" : "business_id",
+          "target" : "id",
+          "operation" : "copy"
+        } ],
+        "reservedFieldsMappingAllowed" : false,
+        "type" : "field-mapping",
+        "skip" : false,
+        "licensed" : true,
+        "secretSourceStageId" : "623bab7d-680e-45c8-83b3-a36c140683b5"
+      }, {
+        "type" : "javascript-index",
+        "id" : "oz6",
+        "script" : "function(doc){\n \n //Build up to full address (or as far as possible)\n if (doc.hasField(\"address\")) {\n   if (doc.hasField(\"city\")){\n     doc.setField(\"address\", doc.getFirstFieldValue(\"address\") + \", \" + doc.getFirstFieldValue(\"city\"));\n       if (doc.hasField(\"state\")){\n         doc.setField(\"address\", doc.getFirstFieldValue(\"address\") + \", \" + doc.getFirstFieldValue(\"state\"));\n           if (doc.hasField(\"postal_code\")){\n             doc.setField(\"address\", doc.getFirstFieldValue(\"address\") + \"  \" + doc.getFirstFieldValue(\"postal_code\"));\n           }\n       }\n   }\n }\n   \n   \n  if (doc.hasField(\"latitude\") && doc.hasField(\"longitude\")){\n    doc.setField(\"location_pt\", doc.getFirstFieldValue(\"latitude\") + \",\" + doc.getFirstFieldValue(\"longitude\")); \n    doc.setField(\"has_location\", true);\n  }\n  \n  if (doc.hasField(\"rating\")){\n    doc.setField(\"popularity_d\", parseDouble(doc.getFirstFieldValue(\"rating\")) * 2); //5 star to 10-point scale\n  }\n  \n  if (doc.hasField(\"categories\")){\n   var types = doc.getFirstFieldValue(\"categories\").split(\",\");\n    for (i=0; i<types.length; i++){\n     doc.addField(\"type\", types[i]); \n    }\n  }\n  \n  //set id from field mapping stage instead\n  return doc;\n}",
+        "type" : "javascript-index",
+        "skip" : false,
+        "licensed" : true,
+        "secretSourceStageId" : "oz6"
+      }, {
+        "type" : "solr-dynamic-field-name-mapping",
+        "id" : "fb01688b-179a-40a1-8837-6c4c72e327bf",
+        "duplicateSingleValuedFields" : false,
+        "fieldsToExclude" : [ ],
+        "advancedTextFieldsIndexing" : true,
+        "maxTextLengthForAdvancedIndexing" : 100,
+        "type" : "solr-dynamic-field-name-mapping",
+        "skip" : false,
+        "licensed" : true,
+        "secretSourceStageId" : "fb01688b-179a-40a1-8837-6c4c72e327bf"
+      }, {
+        "type" : "solr-index",
+        "id" : "e40b6cf5-969b-47f7-b1f2-12ff9577ddff",
+        "enforceSchema" : true,
+        "dateFormats" : [ ],
+        "params" : [ ],
+        "bufferDocsForSolr" : false,
+        "type" : "solr-index",
+        "skip" : false,
+        "licensed" : true,
+        "secretSourceStageId" : "e40b6cf5-969b-47f7-b1f2-12ff9577ddff"
+      } ],
+      "properties" : {
+        "secretSourcePipelineId" : "places"
+      }
+    },  {
+      "id" : "entities",
+      "stages" : [ {
+        "type" : "field-mapping",
+        "id" : "14aa7845-1810-46b6-98ac-a29cd2645d74",
+        "mappings" : [ ],
+        "reservedFieldsMappingAllowed" : false,
+        "type" : "field-mapping",
+        "skip" : false,
+        "licensed" : true,
+        "secretSourceStageId" : "14aa7845-1810-46b6-98ac-a29cd2645d74"
+      }, {
+        "type" : "solr-dynamic-field-name-mapping",
+        "id" : "61f73e56-02ff-4efc-8cc4-ae280b031e0e",
+        "duplicateSingleValuedFields" : false,
+        "fieldsToExclude" : [ ],
+        "advancedTextFieldsIndexing" : true,
+        "maxTextLengthForAdvancedIndexing" : 100,
+        "type" : "solr-dynamic-field-name-mapping",
+        "skip" : true,
+        "licensed" : true,
+        "secretSourceStageId" : "61f73e56-02ff-4efc-8cc4-ae280b031e0e"
+      }, {
+        "type" : "solr-index",
+        "id" : "b0c02c32-a620-4069-a102-f7a905fcf07f",
+        "enforceSchema" : true,
+        "dateFormats" : [ ],
+        "params" : [ ],
+        "bufferDocsForSolr" : false,
+        "type" : "solr-index",
+        "skip" : false,
+        "licensed" : true,
+        "secretSourceStageId" : "b0c02c32-a620-4069-a102-f7a905fcf07f"
+      } ],
+      "properties" : {
+        "secretSourcePipelineId" : "entities"
+      }
+    }, {
+      "id" : "geonames",
+      "stages" : [ {
+        "type" : "javascript-index",
+        "id" : "n9w",
+        "script" : "function(doc){\n  var maxPopulation = 22315474;\n  var popularity = parseInt(doc.getFirstFieldValue(\"population_i\")) / maxPopulation;\n doc.setField(\"popularity\", popularity);\n  \n  return doc;\n}",
+        "type" : "javascript-index",
+        "skip" : false,
+        "licensed" : true,
+        "secretSourceStageId" : "n9w"
+      }, {
+        "type" : "field-mapping",
+        "id" : "3ae57941-3a20-4f34-82c7-0d4aae6b89a4",
+        "mappings" : [ {
+          "source" : "location_p",
+          "target" : "<latitude_s>,<longitude_s>",
+          "operation" : "set"
+        }, {
+          "source" : "type",
+          "target" : "city",
+          "operation" : "set"
+        }, {
+          "source" : "name",
+          "target" : "surface_form",
+          "operation" : "copy"
+        }, {
+          "source" : "name",
+          "target" : "canonical_form",
+          "operation" : "copy"
+        } ],
+        "reservedFieldsMappingAllowed" : false,
+        "type" : "field-mapping",
+        "skip" : false,
+        "licensed" : true,
+        "secretSourceStageId" : "3ae57941-3a20-4f34-82c7-0d4aae6b89a4"
+      }, {
+        "type" : "solr-dynamic-field-name-mapping",
+        "id" : "4592fe9d-ca96-4598-871f-d639eb08d9a4",
+        "duplicateSingleValuedFields" : false,
+        "fieldsToExclude" : [ ],
+        "advancedTextFieldsIndexing" : true,
+        "maxTextLengthForAdvancedIndexing" : 100,
+        "type" : "solr-dynamic-field-name-mapping",
+        "skip" : true,
+        "licensed" : true,
+        "secretSourceStageId" : "4592fe9d-ca96-4598-871f-d639eb08d9a4"
+      }, {
+        "type" : "solr-index",
+        "id" : "dbe60533-9d7a-41ef-ac91-23fe64f2282e",
+        "enforceSchema" : true,
+        "dateFormats" : [ ],
+        "params" : [ ],
+        "bufferDocsForSolr" : false,
+        "type" : "solr-index",
+        "skip" : false,
+        "licensed" : true,
+        "secretSourceStageId" : "dbe60533-9d7a-41ef-ac91-23fe64f2282e"
+      } ],
+      "properties" : {
+        "secretSourcePipelineId" : "geonames"
+      }
+    } ],
+    "queryPipelines" : [ {
+      "id" : "places",
+      "stages" : [ {
+        "type" : "text-tagger",
+        "id" : "d3a84dfd-6138-4478-b712-32e126997271",
+        "useEmbeddedSolrServer" : false,
+        "paramToTag" : "q",
+        "spell_corrections_enabled" : true,
+        "phrase_boosting_enabled" : true,
+        "tail_rewrites_enabled" : true,
+        "phraseBoost" : 2.0,
+        "phraseSlop" : 10,
+        "synonymExpansionBoost" : 2.0,
+        "synonym_expansion_enabled" : true,
+        "overlaps" : "ALL",
+        "params" : [ ],
+        "type" : "text-tagger",
+        "skip" : false,
+        "licensed" : true,
+        "secretSourceStageId" : "d3a84dfd-6138-4478-b712-32e126997271"
+      }, {
+        "type" : "recommendation",
+        "id" : "8d96de09-d435-4097-a2c7-18ba9d1128db",
+        "numRecommendations" : 10,
+        "numSignals" : 100,
+        "aggrType" : "click@doc_id,filters,query",
+        "boostId" : "id",
+        "boostingMethod" : "query-param",
+        "boostingParam" : "boost",
+        "queryParams" : [ {
+          "key" : "qf",
+          "value" : "query_t"
+        }, {
+          "key" : "pf",
+          "value" : "query_t^50"
+        }, {
+          "key" : "pf",
+          "value" : "query_t~3^20"
+        }, {
+          "key" : "pf2",
+          "value" : "query_t^20"
+        }, {
+          "key" : "pf2",
+          "value" : "query_t~3^10"
+        }, {
+          "key" : "pf3",
+          "value" : "query_t^10"
+        }, {
+          "key" : "pf3",
+          "value" : "query_t~3^5"
+        }, {
+          "key" : "boost",
+          "value" : "map(query({!field f=query_s v=$q}),0,0,1,20)"
+        }, {
+          "key" : "mm",
+          "value" : "50%"
+        }, {
+          "key" : "defType",
+          "value" : "edismax"
+        }, {
+          "key" : "sort",
+          "value" : "score desc, weight_d desc"
+        } ],
+        "rollupField" : "doc_id_s",
+        "rollupWeightField" : "weight_d",
+        "weightExpression" : "math:log(weight_d + 1) + 10 * math:log(score+1)",
+        "rollupWeightStrategy" : "max",
+        "type" : "recommendation",
+        "skip" : false,
+        "licensed" : true,
+        "secretSourceStageId" : "8d96de09-d435-4097-a2c7-18ba9d1128db"
+      }, {
+        "type" : "search-fields",
+        "id" : "9d6bce4f-fdba-4c66-af37-771da5c405d1",
+        "rows" : 10,
+        "start" : 0,
+        "queryFields" : [ ],
+        "returnFields" : [ "*", "score" ],
+        "type" : "search-fields",
+        "skip" : false,
+        "licensed" : true,
+        "secretSourceStageId" : "9d6bce4f-fdba-4c66-af37-771da5c405d1"
+      }, {
+        "type" : "facet",
+        "id" : "7377dd78-ac38-4622-91d0-d7240b616d4c",
+        "fieldFacets" : [ ],
+        "type" : "facet",
+        "skip" : false,
+        "licensed" : true,
+        "secretSourceStageId" : "7377dd78-ac38-4622-91d0-d7240b616d4c"
+      }, {
+        "type" : "query-rules",
+        "id" : "666490ee-d0b8-47fa-abee-fa45980b1d1c",
+        "useEmbeddedSolrServer" : false,
+        "useOriginalQueryIfNoRulesMatch" : true,
+        "matchPartialFilterQueries" : true,
+        "handler" : "select",
+        "method" : "POST",
+        "params" : [ ],
+        "headers" : [ ],
+        "type" : "query-rules",
+        "skip" : false,
+        "licensed" : true,
+        "secretSourceStageId" : "666490ee-d0b8-47fa-abee-fa45980b1d1c"
+      }, {
+        "type" : "solr-query",
+        "id" : "03c4775f-a7ea-45b4-8291-8fb64666168d",
+        "httpMethod" : "POST",
+        "allowFederatedSearch" : false,
+        "type" : "solr-query",
+        "skip" : false,
+        "responseSignalsEnabled" : true,
+        "licensed" : true,
+        "secretSourceStageId" : "03c4775f-a7ea-45b4-8291-8fb64666168d"
+      }, {
+        "type" : "query-rules-augment-response",
+        "id" : "004fa747-c9de-4702-9332-6d3275606754",
+        "facetLabelParseDelimiter" : "||",
+        "type" : "query-rules-augment-response",
+        "skip" : false,
+        "licensed" : true,
+        "secretSourceStageId" : "004fa747-c9de-4702-9332-6d3275606754"
+      } ],
+      "properties" : {
+        "secretSourcePipelineId" : "places"
+      }
+    }, {
+      "id" : "entities",
+      "stages" : [ {
+        "type" : "text-tagger",
+        "id" : "8a05a44a-e9e0-4cfb-9b51-f1f8e221e671",
+        "useEmbeddedSolrServer" : false,
+        "paramToTag" : "q",
+        "taggedOutputParam" : "tagged",
+        "saveTagsInContextKey" : "tagger",
+        "spell_corrections_enabled" : true,
+        "phrase_boosting_enabled" : true,
+        "tail_rewrites_enabled" : true,
+        "phraseBoost" : 2.0,
+        "phraseSlop" : 10,
+        "synonymExpansionBoost" : 2.0,
+        "synonym_expansion_enabled" : true,
+        "taggerCollectionId" : "geonames",
+        "overlaps" : "ALL",
+        "params" : [ ],
+        "type" : "text-tagger",
+        "skip" : false,
+        "licensed" : true,
+        "secretSourceStageId" : "8a05a44a-e9e0-4cfb-9b51-f1f8e221e671"
+      }, {
+        "type" : "recommendation",
+        "id" : "0db71ae5-4e97-46e9-a394-0cf162d3e844",
+        "numRecommendations" : 10,
+        "numSignals" : 100,
+        "aggrType" : "click@doc_id,filters,query",
+        "boostId" : "id",
+        "boostingMethod" : "query-param",
+        "boostingParam" : "boost",
+        "queryParams" : [ {
+          "key" : "qf",
+          "value" : "query_t"
+        }, {
+          "key" : "pf",
+          "value" : "query_t^50"
+        }, {
+          "key" : "pf",
+          "value" : "query_t~3^20"
+        }, {
+          "key" : "pf2",
+          "value" : "query_t^20"
+        }, {
+          "key" : "pf2",
+          "value" : "query_t~3^10"
+        }, {
+          "key" : "pf3",
+          "value" : "query_t^10"
+        }, {
+          "key" : "pf3",
+          "value" : "query_t~3^5"
+        }, {
+          "key" : "boost",
+          "value" : "map(query({!field f=query_s v=$q}),0,0,1,20)"
+        }, {
+          "key" : "mm",
+          "value" : "50%"
+        }, {
+          "key" : "defType",
+          "value" : "edismax"
+        }, {
+          "key" : "sort",
+          "value" : "score desc, weight_d desc"
+        } ],
+        "rollupField" : "doc_id_s",
+        "rollupWeightField" : "weight_d",
+        "weightExpression" : "math:log(weight_d + 1) + 10 * math:log(score+1)",
+        "rollupWeightStrategy" : "max",
+        "asyncConfig" : {
+          "enabled" : false,
+          "asyncId" : "0db71ae5-4e97-46e9-a394-0cf162d3e844"
+        },
+        "type" : "recommendation",
+        "skip" : false,
+        "licensed" : true,
+        "secretSourceStageId" : "0db71ae5-4e97-46e9-a394-0cf162d3e844"
+      }, {
+        "type" : "search-fields",
+        "id" : "521085ab-551f-44d0-9e2a-9f59d2103cf0",
+        "rows" : 10,
+        "start" : 0,
+        "queryFields" : [ ],
+        "returnFields" : [ "*", "score" ],
+        "type" : "search-fields",
+        "skip" : false,
+        "licensed" : true,
+        "secretSourceStageId" : "521085ab-551f-44d0-9e2a-9f59d2103cf0"
+      }, {
+        "type" : "facet",
+        "id" : "acf06fcf-2f09-484e-8e5d-4d0424caf063",
+        "fieldFacets" : [ {
+          "field" : "type",
+          "minCount" : 1,
+          "missing" : false
+        } ],
+        "type" : "facet",
+        "skip" : false,
+        "licensed" : true,
+        "secretSourceStageId" : "acf06fcf-2f09-484e-8e5d-4d0424caf063",
+        "properties" : {
+          "autoCreated" : true
+        }
+      }, {
+        "type" : "query-rules",
+        "id" : "2a9e33e2-f8f7-47f9-890e-2e1f598aca9a",
+        "useEmbeddedSolrServer" : false,
+        "useOriginalQueryIfNoRulesMatch" : true,
+        "matchPartialFilterQueries" : true,
+        "handler" : "select",
+        "method" : "POST",
+        "params" : [ ],
+        "headers" : [ ],
+        "asyncConfig" : {
+          "enabled" : false,
+          "asyncId" : "2a9e33e2-f8f7-47f9-890e-2e1f598aca9a"
+        },
+        "type" : "query-rules",
+        "skip" : false,
+        "licensed" : true,
+        "secretSourceStageId" : "2a9e33e2-f8f7-47f9-890e-2e1f598aca9a"
+      }, {
+        "type" : "solr-query",
+        "id" : "571acf58-ebbf-4134-b65b-28bd77b216ca",
+        "httpMethod" : "POST",
+        "allowFederatedSearch" : false,
+        "type" : "solr-query",
+        "skip" : false,
+        "responseSignalsEnabled" : true,
+        "licensed" : true,
+        "secretSourceStageId" : "571acf58-ebbf-4134-b65b-28bd77b216ca"
+      }, {
+        "type" : "query-rules-augment-response",
+        "id" : "e41024d9-b4df-48d5-a184-a123687bb9f3",
+        "facetLabelParseDelimiter" : "||",
+        "type" : "query-rules-augment-response",
+        "skip" : false,
+        "licensed" : true,
+        "secretSourceStageId" : "e41024d9-b4df-48d5-a184-a123687bb9f3"
+      } ],
+      "properties" : {
+        "secretSourcePipelineId" : "entities"
+      }
+    }, {
+      "id" : "geonames",
+      "stages" : [ {
+        "type" : "text-tagger",
+        "id" : "eb0347ec-f7f1-4da6-ae82-6f96105e7be9",
+        "useEmbeddedSolrServer" : false,
+        "paramToTag" : "q",
+        "spell_corrections_enabled" : true,
+        "phrase_boosting_enabled" : true,
+        "tail_rewrites_enabled" : true,
+        "phraseBoost" : 2.0,
+        "phraseSlop" : 10,
+        "synonymExpansionBoost" : 2.0,
+        "synonym_expansion_enabled" : true,
+        "overlaps" : "ALL",
+        "params" : [ ],
+        "type" : "text-tagger",
+        "skip" : false,
+        "licensed" : true,
+        "secretSourceStageId" : "eb0347ec-f7f1-4da6-ae82-6f96105e7be9"
+      }, {
+        "type" : "recommendation",
+        "id" : "19955464-3aed-44ef-80ed-bacc97ef677a",
+        "numRecommendations" : 10,
+        "numSignals" : 100,
+        "aggrType" : "click@doc_id,filters,query",
+        "boostId" : "id",
+        "boostingMethod" : "query-param",
+        "boostingParam" : "boost",
+        "queryParams" : [ {
+          "key" : "qf",
+          "value" : "query_t"
+        }, {
+          "key" : "pf",
+          "value" : "query_t^50"
+        }, {
+          "key" : "pf",
+          "value" : "query_t~3^20"
+        }, {
+          "key" : "pf2",
+          "value" : "query_t^20"
+        }, {
+          "key" : "pf2",
+          "value" : "query_t~3^10"
+        }, {
+          "key" : "pf3",
+          "value" : "query_t^10"
+        }, {
+          "key" : "pf3",
+          "value" : "query_t~3^5"
+        }, {
+          "key" : "boost",
+          "value" : "map(query({!field f=query_s v=$q}),0,0,1,20)"
+        }, {
+          "key" : "mm",
+          "value" : "50%"
+        }, {
+          "key" : "defType",
+          "value" : "edismax"
+        }, {
+          "key" : "sort",
+          "value" : "score desc, weight_d desc"
+        } ],
+        "rollupField" : "doc_id_s",
+        "rollupWeightField" : "weight_d",
+        "weightExpression" : "math:log(weight_d + 1) + 10 * math:log(score+1)",
+        "rollupWeightStrategy" : "max",
+        "asyncConfig" : {
+          "enabled" : false,
+          "asyncId" : "19955464-3aed-44ef-80ed-bacc97ef677a"
+        },
+        "type" : "recommendation",
+        "skip" : false,
+        "licensed" : true,
+        "secretSourceStageId" : "19955464-3aed-44ef-80ed-bacc97ef677a"
+      }, {
+        "type" : "search-fields",
+        "id" : "f967a384-9584-4609-955d-f14f2b95b237",
+        "rows" : 10,
+        "start" : 0,
+        "queryFields" : [ ],
+        "returnFields" : [ "*", "score" ],
+        "type" : "search-fields",
+        "skip" : false,
+        "licensed" : true,
+        "secretSourceStageId" : "f967a384-9584-4609-955d-f14f2b95b237"
+      }, {
+        "type" : "facet",
+        "id" : "a160bace-1f28-4ed5-9a52-c354a9ad536c",
+        "fieldFacets" : [ {
+          "field" : "countrycode_s",
+          "minCount" : 1,
+          "missing" : false
+        } ],
+        "type" : "facet",
+        "skip" : false,
+        "licensed" : true,
+        "secretSourceStageId" : "a160bace-1f28-4ed5-9a52-c354a9ad536c",
+        "properties" : {
+          "autoCreated" : true
+        }
+      }, {
+        "type" : "query-rules",
+        "id" : "978f33c4-e3fa-4fad-9cc5-02d6cee079ec",
+        "useEmbeddedSolrServer" : false,
+        "useOriginalQueryIfNoRulesMatch" : true,
+        "matchPartialFilterQueries" : true,
+        "handler" : "select",
+        "method" : "POST",
+        "params" : [ ],
+        "headers" : [ ],
+        "asyncConfig" : {
+          "enabled" : false,
+          "asyncId" : "978f33c4-e3fa-4fad-9cc5-02d6cee079ec"
+        },
+        "type" : "query-rules",
+        "skip" : false,
+        "licensed" : true,
+        "secretSourceStageId" : "978f33c4-e3fa-4fad-9cc5-02d6cee079ec"
+      }, {
+        "type" : "solr-query",
+        "id" : "69c3375a-34cd-46e5-8acd-f0c3b28fc169",
+        "httpMethod" : "POST",
+        "allowFederatedSearch" : false,
+        "type" : "solr-query",
+        "skip" : false,
+        "responseSignalsEnabled" : true,
+        "licensed" : true,
+        "secretSourceStageId" : "69c3375a-34cd-46e5-8acd-f0c3b28fc169"
+      }, {
+        "type" : "query-rules-augment-response",
+        "id" : "b865fda0-d6aa-4642-bc6b-69679554894e",
+        "facetLabelParseDelimiter" : "||",
+        "type" : "query-rules-augment-response",
+        "skip" : false,
+        "licensed" : true,
+        "secretSourceStageId" : "b865fda0-d6aa-4642-bc6b-69679554894e"
+      } ],
+      "properties" : {
+        "secretSourcePipelineId" : "geonames"
+      }
+    } ],
+    "features" : {
+      "places" : [ {
+        "name" : "partitionByTime",
+        "collectionId" : "places",
+        "params" : { },
+        "enabled" : false
+      }, {
+        "name" : "recommendations",
+        "collectionId" : "places",
+        "params" : {
+          "idField" : "id",
+          "itemsForUser" : true,
+          "itemsForQuery" : false,
+          "itemsForItem" : true,
+          "queriesForQuery" : false
+        },
+        "enabled" : false
+      }, {
+        "name" : "searchLogs",
+        "collectionId" : "places",
+        "params" : { },
+        "enabled" : false
+      }, {
+        "name" : "signals",
+        "collectionId" : "places",
+        "params" : { },
+        "enabled" : false
+      } ],
+      "entities" : [ {
+        "name" : "partitionByTime",
+        "collectionId" : "entities",
+        "params" : { },
+        "enabled" : false
+      }, {
+        "name" : "recommendations",
+        "collectionId" : "entities",
+        "params" : {
+          "idField" : "id",
+          "itemsForUser" : true,
+          "itemsForQuery" : false,
+          "itemsForItem" : true,
+          "queriesForQuery" : false
+        },
+        "enabled" : false
+      }, {
+        "name" : "searchLogs",
+        "collectionId" : "entities",
+        "params" : { },
+        "enabled" : false
+      }, {
+        "name" : "signals",
+        "collectionId" : "entities",
+        "params" : { },
+        "enabled" : false
+      } ]
+    },
+    "parsers" : [ {
+      "id" : "places-manual",
+      "enableMediaTypeDetection" : true,
+      "maxParserDepth" : 16,
+      "parserStages" : [ {
+        "type" : "archive",
+        "enabled" : false,
+        "mediaTypes" : [ ],
+        "pathPatterns" : [ ],
+        "errorHandling" : "mark",
+        "id" : "2300929b-b0fd-4635-b1a9-f935eddc97ab",
+        "alwaysDetect" : true,
+        "inheritMediaTypes" : true,
+        "outputFieldPrefix" : ""
+      }, {
+        "type" : "csv",
+        "enabled" : false,
+        "mediaTypes" : [ ],
+        "pathPatterns" : [ ],
+        "errorHandling" : "mark",
+        "id" : "347b2b75-3b80-4a0d-85c3-aff67f5401c2",
+        "charset" : "detect",
+        "ignoreBOM" : false,
+        "autoDetect" : true,
+        "hasHeaders" : true,
+        "headers" : [ ],
+        "fillValue" : "<FILL>",
+        "trimWhitespace" : true,
+        "skipEmptyLines" : true,
+        "includeRowNumber" : true,
+        "commentHandling" : "ignore",
+        "maxRowLength" : 10485760,
+        "maxNumColumns" : 1000,
+        "maxColumnChars" : 10485760,
+        "columnHandling" : "default",
+        "inheritMediaTypes" : true,
+        "outputFieldPrefix" : ""
+      }, {
+        "type" : "json",
+        "enabled" : true,
+        "mediaTypes" : [ ],
+        "pathPatterns" : [ ],
+        "errorHandling" : "mark",
+        "id" : "0d343138-86f3-4e27-bb70-9d9e63279104",
+        "splitArrays" : true,
+        "includePath" : false,
+        "mappings" : [ ],
+        "listHandling" : "multivalued",
+        "inheritMediaTypes" : true,
+        "outputFieldPrefix" : ""
+      }, {
+        "type" : "xml",
+        "enabled" : false,
+        "mediaTypes" : [ ],
+        "pathPatterns" : [ ],
+        "errorHandling" : "mark",
+        "id" : "fe80b45c-107c-470d-a35c-6a2bfc53c3c2",
+        "rootPaths" : [ "/" ],
+        "maxSize" : 65536,
+        "listHandling" : "multivalued",
+        "inheritMediaTypes" : true,
+        "outputFieldPrefix" : ""
+      }, {
+        "type" : "html",
+        "enabled" : false,
+        "mediaTypes" : [ ],
+        "pathPatterns" : [ ],
+        "errorHandling" : "mark",
+        "id" : "9264b4ca-5b42-4ff8-ad1c-d95cf303a80f",
+        "charset" : "detect",
+        "mappings" : [ ],
+        "keepParent" : true,
+        "extractHtmlLinks" : false,
+        "extractBodyText" : true,
+        "metatagsPrefix" : "",
+        "inheritMediaTypes" : true,
+        "outputFieldPrefix" : ""
+      }, {
+        "type" : "text",
+        "enabled" : false,
+        "mediaTypes" : [ ],
+        "pathPatterns" : [ ],
+        "errorHandling" : "mark",
+        "id" : "95afa197-78f4-4dea-b201-7abd3c59f8b8",
+        "charset" : "detect",
+        "ignoreBOM" : false,
+        "maxLength" : 1048576,
+        "maxLineLength" : 1048576,
+        "outputField" : "body",
+        "splitLines" : false,
+        "skipEmptyLines" : false,
+        "skipHeaderLines" : 0,
+        "trimWhitespace" : false,
+        "commentHandling" : "include",
+        "comment" : "#",
+        "commentField" : "comment",
+        "inheritMediaTypes" : true,
+        "outputFieldPrefix" : ""
+      }, {
+        "type" : "tika",
+        "enabled" : false,
+        "mediaTypes" : [ ],
+        "pathPatterns" : [ ],
+        "errorHandling" : "mark",
+        "id" : "b26a66c6-e32d-4871-9df8-f8676668cd3c",
+        "includeImages" : false,
+        "flattenCompound" : true,
+        "addFailedDocs" : false,
+        "addOriginalContent" : false,
+        "contentEncoding" : "binary",
+        "returnXml" : false,
+        "keepOriginalStructure" : false,
+        "extractHtmlLinks" : false,
+        "extractOtherLinks" : false,
+        "excludeContentTypes" : [ ],
+        "zipBombCompressionRatio" : 200,
+        "zipBombMaxDepth" : 200,
+        "zipBombMaxPackageEntryDepth" : 20,
+        "inheritMediaTypes" : true,
+        "outputFieldPrefix" : ""
+      }, {
+        "type" : "fallback",
+        "enabled" : false,
+        "mediaTypes" : [ ],
+        "pathPatterns" : [ ],
+        "errorHandling" : "mark",
+        "id" : "e996866e-c6cb-4cb7-be44-b5651c83082c",
+        "metadataOnly" : false,
+        "maxBytesToKeep" : 1048576,
+        "inheritMediaTypes" : true,
+        "outputFieldPrefix" : ""
+      } ]
+    }, {
+      "id" : "places",
+      "enableMediaTypeDetection" : true,
+      "maxParserDepth" : 16,
+      "parserStages" : [ {
+        "type" : "archive",
+        "enabled" : true,
+        "mediaTypes" : [ ],
+        "pathPatterns" : [ ],
+        "errorHandling" : "mark",
+        "id" : "a74e9595-ee2c-482d-9b33-2d6b6e66af2e",
+        "alwaysDetect" : true,
+        "inheritMediaTypes" : true,
+        "outputFieldPrefix" : ""
+      }, {
+        "type" : "csv",
+        "enabled" : true,
+        "mediaTypes" : [ ],
+        "pathPatterns" : [ ],
+        "errorHandling" : "mark",
+        "id" : "953a71c1-5ca6-4729-8938-220968ec4921",
+        "charset" : "detect",
+        "ignoreBOM" : false,
+        "autoDetect" : true,
+        "hasHeaders" : true,
+        "headers" : [ ],
+        "fillValue" : "<FILL>",
+        "trimWhitespace" : true,
+        "skipEmptyLines" : true,
+        "includeRowNumber" : true,
+        "commentHandling" : "ignore",
+        "maxRowLength" : 10485760,
+        "maxNumColumns" : 1000,
+        "maxColumnChars" : 10485760,
+        "columnHandling" : "default",
+        "inheritMediaTypes" : true,
+        "outputFieldPrefix" : ""
+      }, {
+        "type" : "json",
+        "enabled" : true,
+        "mediaTypes" : [ ],
+        "pathPatterns" : [ ],
+        "errorHandling" : "mark",
+        "id" : "ef5999a2-4f76-45d8-beb4-2ff7c9aa6544",
+        "splitArrays" : true,
+        "includePath" : false,
+        "mappings" : [ ],
+        "listHandling" : "multivalued",
+        "inheritMediaTypes" : true,
+        "outputFieldPrefix" : ""
+      }, {
+        "type" : "xml",
+        "enabled" : true,
+        "mediaTypes" : [ ],
+        "pathPatterns" : [ ],
+        "errorHandling" : "mark",
+        "id" : "b62abf7e-a1ac-4479-b38d-b798f9293d28",
+        "rootPaths" : [ "/" ],
+        "maxSize" : 65536,
+        "listHandling" : "multivalued",
+        "inheritMediaTypes" : true,
+        "outputFieldPrefix" : ""
+      }, {
+        "type" : "html",
+        "enabled" : true,
+        "mediaTypes" : [ ],
+        "pathPatterns" : [ ],
+        "errorHandling" : "mark",
+        "id" : "719d5947-ebca-4b16-96f6-b4456fc93252",
+        "charset" : "detect",
+        "mappings" : [ ],
+        "keepParent" : true,
+        "extractHtmlLinks" : false,
+        "extractBodyText" : true,
+        "metatagsPrefix" : "",
+        "inheritMediaTypes" : true,
+        "outputFieldPrefix" : ""
+      }, {
+        "type" : "text",
+        "enabled" : true,
+        "mediaTypes" : [ ],
+        "pathPatterns" : [ ],
+        "errorHandling" : "mark",
+        "id" : "424e2a15-187c-42a5-8450-52efc5ba65cf",
+        "charset" : "detect",
+        "ignoreBOM" : false,
+        "maxLength" : 1048576,
+        "maxLineLength" : 1048576,
+        "outputField" : "body",
+        "splitLines" : false,
+        "skipEmptyLines" : false,
+        "skipHeaderLines" : 0,
+        "trimWhitespace" : false,
+        "commentHandling" : "include",
+        "comment" : "#",
+        "commentField" : "comment",
+        "inheritMediaTypes" : true,
+        "outputFieldPrefix" : ""
+      }, {
+        "type" : "tika",
+        "enabled" : true,
+        "mediaTypes" : [ ],
+        "pathPatterns" : [ ],
+        "errorHandling" : "mark",
+        "id" : "39d33a92-f332-4635-ae55-c87099374616",
+        "includeImages" : false,
+        "flattenCompound" : true,
+        "addFailedDocs" : false,
+        "addOriginalContent" : false,
+        "contentEncoding" : "binary",
+        "returnXml" : false,
+        "keepOriginalStructure" : false,
+        "extractHtmlLinks" : false,
+        "extractOtherLinks" : false,
+        "excludeContentTypes" : [ ],
+        "zipBombCompressionRatio" : 200,
+        "zipBombMaxDepth" : 200,
+        "zipBombMaxPackageEntryDepth" : 20,
+        "inheritMediaTypes" : true,
+        "outputFieldPrefix" : ""
+      }, {
+        "type" : "fallback",
+        "enabled" : true,
+        "mediaTypes" : [ ],
+        "pathPatterns" : [ ],
+        "errorHandling" : "mark",
+        "id" : "9908143f-39bf-453e-9800-7d2e060b92cb",
+        "metadataOnly" : false,
+        "maxBytesToKeep" : 1048576,
+        "inheritMediaTypes" : true,
+        "outputFieldPrefix" : ""
+      } ]
+    }, {
+      "id" : "entities-manual",
+      "enableMediaTypeDetection" : true,
+      "maxParserDepth" : 16,
+      "parserStages" : [ {
+        "type" : "csv",
+        "enabled" : true,
+        "mediaTypes" : [ ],
+        "pathPatterns" : [ ],
+        "errorHandling" : "mark",
+        "id" : "nqd",
+        "charset" : "detect",
+        "ignoreBOM" : false,
+        "autoDetect" : true,
+        "hasHeaders" : true,
+        "headers" : [ ],
+        "fillValue" : "<FILL>",
+        "trimWhitespace" : true,
+        "skipEmptyLines" : true,
+        "includeRowNumber" : true,
+        "commentHandling" : "ignore",
+        "maxRowLength" : 10485760,
+        "maxNumColumns" : 1000,
+        "maxColumnChars" : 10485760,
+        "columnHandling" : "default",
+        "inheritMediaTypes" : true,
+        "outputFieldPrefix" : ""
+      }, {
+        "type" : "archive",
+        "enabled" : true,
+        "mediaTypes" : [ ],
+        "pathPatterns" : [ ],
+        "errorHandling" : "mark",
+        "id" : "2e100c62-c3a3-4a32-a6e4-dd4c71f4c183",
+        "alwaysDetect" : true,
+        "inheritMediaTypes" : true,
+        "outputFieldPrefix" : ""
+      } ],
+      "editPanel" : { }
+    }, {
+      "id" : "geonames",
+      "enableMediaTypeDetection" : true,
+      "maxParserDepth" : 16,
+      "parserStages" : [ {
+        "type" : "archive",
+        "enabled" : true,
+        "mediaTypes" : [ ],
+        "pathPatterns" : [ ],
+        "errorHandling" : "mark",
+        "id" : "5ce35a60-0655-4b31-a604-d95a03a86f70",
+        "alwaysDetect" : true,
+        "inheritMediaTypes" : true,
+        "outputFieldPrefix" : ""
+      }, {
+        "type" : "csv",
+        "label" : "Parse geonames CSV (text/plain included), tab delimited",
+        "enabled" : true,
+        "mediaTypes" : [ "text/plain" ],
+        "pathPatterns" : [ ],
+        "errorHandling" : "mark",
+        "id" : "a93cc8fc-e48c-4a07-abc2-de4b38e9e866",
+        "charset" : "detect",
+        "ignoreBOM" : false,
+        "autoDetect" : true,
+        "delimiter" : "\\t",
+        "hasHeaders" : false,
+        "headers" : [ "id", "name", "ascii_name_s", "alternative_names_s", "latitude_s", "longitude_s", "feature_class_s", "feature_code_s", "countrycode_s", "cc2_s", "admin_code_1_s", "admin_code_2_s", "admin_code_3_s", "admin_code_4_s", "population_i", "elevation_s", "dem_s", "timezone_s", "modification_date_s" ],
+        "fillValue" : "<FILL>",
+        "trimWhitespace" : true,
+        "skipEmptyLines" : true,
+        "includeRowNumber" : true,
+        "commentHandling" : "ignore",
+        "maxRowLength" : 10485760,
+        "maxNumColumns" : 1000,
+        "maxColumnChars" : 10485760,
+        "columnHandling" : "default",
+        "inheritMediaTypes" : true,
+        "outputFieldPrefix" : ""
+      }, {
+        "type" : "fallback",
+        "enabled" : false,
+        "mediaTypes" : [ ],
+        "pathPatterns" : [ ],
+        "errorHandling" : "mark",
+        "id" : "f2928651-22fc-4f1f-ac13-fc3245817a9f",
+        "metadataOnly" : false,
+        "maxBytesToKeep" : 1048576,
+        "inheritMediaTypes" : true,
+        "outputFieldPrefix" : ""
+      } ],
+      "editPanel" : { }
+    } ],
+    "links" : [ {
+      "subject" : "app:semantic-search",
+      "object" : "group:_shared",
+      "linkType" : "relatesTo",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "blob:entities-geonames-cities1000.zip",
+      "object" : "app:semantic-search",
+      "linkType" : "inContextOf",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "blob:entities-manual.csv",
+      "object" : "app:semantic-search",
+      "linkType" : "inContextOf",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "blob:places-manual.json",
+      "object" : "app:semantic-search",
+      "linkType" : "inContextOf",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "collection:places",
+      "object" : "app:semantic-search",
+      "linkType" : "inContextOf",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "collection:places",
+      "object" : "index-pipeline:places",
+      "linkType" : "relatesTo",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "collection:places",
+      "object" : "query-pipeline:places",
+      "linkType" : "relatesTo",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "collection:entities",
+      "object" : "app:semantic-search",
+      "linkType" : "inContextOf",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "collection:entities",
+      "object" : "index-pipeline:entities",
+      "linkType" : "relatesTo",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "collection:entities",
+      "object" : "query-pipeline:entities",
+      "linkType" : "relatesTo",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "datasource:entities-geonames-cities",
+      "object" : "app:semantic-search",
+      "linkType" : "inContextOf",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "datasource:entities-geonames-cities",
+      "object" : "blob:centities-geonames-cities1000.zip",
+      "linkType" : "dependsOn",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "datasource:entities-geonames-cities",
+      "object" : "collection:entities",
+      "linkType" : "relatesTo",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "datasource:entities-geonames-cities",
+      "object" : "index-pipeline:geonames",
+      "linkType" : "dependsOn",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "datasource:entities-geonames-cities",
+      "object" : "parser:geonames",
+      "linkType" : "dependsOn",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "datasource:file-places-crawled",
+      "object" : "app:semantic-search",
+      "linkType" : "inContextOf",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "datasource:file-places-crawled",
+      "object" : "collection:places",
+      "linkType" : "relatesTo",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "datasource:file-places-crawled",
+      "object" : "index-pipeline:places",
+      "linkType" : "dependsOn",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "datasource:file-places-crawled",
+      "object" : "parser:places",
+      "linkType" : "dependsOn",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "datasource:upload-entities-manual",
+      "object" : "app:semantic-search",
+      "linkType" : "inContextOf",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "datasource:upload-entities-manual",
+      "object" : "blob:entities-manual.csv",
+      "linkType" : "dependsOn",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "datasource:upload-entities-manual",
+      "object" : "collection:entities",
+      "linkType" : "relatesTo",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "datasource:upload-entities-manual",
+      "object" : "index-pipeline:entities",
+      "linkType" : "dependsOn",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "datasource:upload-entities-manual",
+      "object" : "parser:entities-manual",
+      "linkType" : "dependsOn",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "datasource:upload-places-manual",
+      "object" : "app:semantic-search",
+      "linkType" : "inContextOf",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "datasource:upload-places-manual",
+      "object" : "blob:places-manual.json",
+      "linkType" : "dependsOn",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "datasource:upload-places-manual",
+      "object" : "collection:places",
+      "linkType" : "relatesTo",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "datasource:upload-places-manual",
+      "object" : "index-pipeline:places-manual",
+      "linkType" : "dependsOn",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "datasource:upload-places-manual",
+      "object" : "parser:places-manual",
+      "linkType" : "dependsOn",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "group:0c7a552d-df15-45f9-b0fb-300a69506ffa",
+      "object" : "collection:places",
+      "linkType" : "relatesTo",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "group:1d448359-ccce-437b-812c-99f0c5e7a8d0",
+      "object" : "collection:entities",
+      "linkType" : "relatesTo",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "group:6116fbd2-32c6-4a6a-8fbd-1ebdd2ce614e",
+      "object" : "group:8d6969f9-50cc-4fc9-8243-3b08f854d7c8",
+      "linkType" : "isPartOf",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "group:8d6969f9-50cc-4fc9-8243-3b08f854d7c8",
+      "object" : "collection:places",
+      "linkType" : "relatesTo",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "group:8d6969f9-50cc-4fc9-8243-3b08f854d7c8",
+      "object" : "collection:places_recommender_models",
+      "linkType" : "hasPart",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "group:b6924420-35c5-40c2-9875-c23faa2161fa",
+      "object" : "group:8d6969f9-50cc-4fc9-8243-3b08f854d7c8",
+      "linkType" : "isPartOf",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "index-pipeline:places-manual",
+      "object" : "app:semantic-search",
+      "linkType" : "inContextOf",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "index-pipeline:places",
+      "object" : "app:semantic-search",
+      "linkType" : "inContextOf",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "index-pipeline:colors",
+      "object" : "app:semantic-search",
+      "linkType" : "inContextOf",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "index-pipeline:entities",
+      "object" : "app:semantic-search",
+      "linkType" : "inContextOf",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "index-pipeline:geonames",
+      "object" : "app:semantic-search",
+      "linkType" : "inContextOf",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "parser:places-manual",
+      "object" : "app:semantic-search",
+      "linkType" : "inContextOf",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "parser:places",
+      "object" : "app:semantic-search",
+      "linkType" : "inContextOf",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "parser:entities-manual",
+      "object" : "app:semantic-search",
+      "linkType" : "inContextOf",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "parser:geonames",
+      "object" : "app:semantic-search",
+      "linkType" : "inContextOf",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "parser:restaurant_crawl",
+      "object" : "app:semantic-search",
+      "linkType" : "inContextOf",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "parser:w3schools_colors",
+      "object" : "app:semantic-search",
+      "linkType" : "inContextOf",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "query-pipeline:entities",
+      "object" : "app:semantic-search",
+      "linkType" : "inContextOf",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "query-pipeline:geonames",
+      "object" : "app:semantic-search",
+      "linkType" : "inContextOf",
+      "originator" : "unspecified"
+    }, {
+      "subject" : "query-pipeline:tagger",
+      "object" : "app:semantic-search",
+      "linkType" : "inContextOf",
+      "originator" : "unspecified"
+    }
+  ],
+    "blobs" : [ {
+      "id" : "entities-geonames-cities1000.zip",
+      "path" : "/entities-geonames-cities1000.zip",
+      "dir" : "/",
+      "filename" : "entities-geonames-cities1000.zip",
+      "contentType" : "application/zip",
+      "size" : 7762331,
+      "modifiedTime" : "2019-04-24T18:34:57.311Z",
+      "version" : 1631721511779827712,
+      "md5" : "265806ebe8581a9a449d4ac3334f8b40",
+      "metadata" : {
+        "resourceType" : "file"
+      }
+    }, {
+      "id" : "entities-manual.csv",
+      "path" : "/entities-manual.csv",
+      "dir" : "/",
+      "filename" : "entities-manual.csv",
+      "contentType" : "text/csv",
+      "size" : 970,
+      "modifiedTime" : "2019-06-14T20:40:09.353Z",
+      "version" : 1636349834013179904,
+      "md5" : "843450756a0a3dd8ead01efa76e6a3cc",
+      "metadata" : {
+        "resourceType" : "file"
+      }
+    }, {
+      "id" : "places-manual.json",
+      "path" : "/places-manual.json",
+      "dir" : "/",
+      "filename" : "places-manual.json",
+      "contentType" : "application/json",
+      "size" : 4093,
+      "modifiedTime" : "2019-06-14T19:27:37.798Z",
+      "version" : 1636345271077044224,
+      "md5" : "cf24752c83730327f843dbf87e06b8ed",
+      "metadata" : {
+        "resourceType" : "file"
+      }
+    } 
+  ],
+    "fusionApps" : [ {
+      "id" : "semantic-search",
+      "name" : "Semantic Search",
+      "description" : "Open `entities`, start datasources.\n\nSee the entity tagger in action here: http://<host>:8983/solr/entities/semantic",
+      "dataUri" : "/admin/App-Tile-01-460x160.png",
+      "properties" : {
+        "headerImageName" : "headerImage1",
+        "tileColor" : "apps-orange",
+        "previousCollectionId" : "entities"
+      }
+    } ],
+    "dataSources" : [  {
+      "id" : "entities-geonames-cities",
+      "created" : "2019-03-26T19:12:06.371Z",
+      "modified" : "2019-03-26T19:12:06.371Z",
+      "connector" : "lucid.fileupload",
+      "type" : "fileupload",
+      "pipeline" : "geonames",
+      "parserId" : "geonames",
+      "properties" : {
+        "mediaType" : "application/zip",
+        "collection" : "entities",
+        "fileId" : "entities-geonames-cities1000.zip"
+      }
+    }, {
+      "id" : "file-places-crawled",
+      "created" : "2019-04-21T03:46:41.549Z",
+      "modified" : "2019-04-21T03:46:41.549Z",
+      "connector" : "lucid.file",
+      "type" : "file",
+      "pipeline" : "places",
+      "parserId" : "places",
+      "properties" : {
+        "refreshOlderThan" : -1,
+        "emitThreads" : 5,
+        "diagnosticMode" : false,
+        "refreshErrors" : false,
+        "dedupeSaveSignature" : false,
+        "crawlDBType" : "on-disk",
+        "delete" : true,
+        "initial_mapping" : {
+          "mappings" : [ {
+            "source" : "charSet",
+            "operation" : "move",
+            "target" : "charSet_s"
+          }, {
+            "source" : "fetchedDate",
+            "operation" : "move",
+            "target" : "fetchedDate_dt"
+          }, {
+            "source" : "lastModified",
+            "operation" : "move",
+            "target" : "lastModified_dt"
+          }, {
+            "source" : "signature",
+            "operation" : "move",
+            "target" : "dedupeSignature_s"
+          }, {
+            "source" : "contentSignature",
+            "operation" : "move",
+            "target" : "signature_s"
+          }, {
+            "source" : "length",
+            "operation" : "move",
+            "target" : "length_l"
+          }, {
+            "source" : "mimeType",
+            "operation" : "move",
+            "target" : "mimeType_s"
+          }, {
+            "source" : "parent",
+            "operation" : "move",
+            "target" : "parent_s"
+          }, {
+            "source" : "owner",
+            "operation" : "move",
+            "target" : "owner_s"
+          }, {
+            "source" : "group",
+            "operation" : "move",
+            "target" : "group_s"
+          } ],
+          "reservedFieldsMappingAllowed" : false,
+          "skip" : false,
+          "id" : "FromMap",
+          "type" : "field-mapping"
+        },
+        "fetchDelayMS" : 0,
+        "refreshAll" : true,
+        "commitAfterItems" : 10000,
+        "startLinks" : [ "/Users/treygrainger/Development/natural-language-search/app/datasets/places-crawled.json.zip" ],
+        "failFastOnStartLinkFailure" : true,
+        "f.minSizeBytes" : 0,
+        "maxItems" : -1,
+        "dedupe" : false,
+        "chunkSize" : 1,
+        "trackEmbeddedIDs" : true,
+        "collection" : "places",
+        "deleteErrorsAfter" : -1,
+        "forceRefresh" : false,
+        "retryEmit" : true,
+        "depth" : -1,
+        "f.maxSizeBytes" : -1,
+        "f.index_items_discarded" : false,
+        "refreshStartLinks" : false,
+        "f.addFileMetadata" : false,
+        "aliasExpiration" : 1,
+        "fetchThreads" : 5,
+        "indexCrawlDBToSolr" : false,
+        "restrictToTree" : false,
+        "retainOutlinks" : false
+      }
+    }, {
+      "id" : "upload-entities-manual",
+      "created" : "2019-06-14T20:40:18.208Z",
+      "modified" : "2019-06-14T20:40:18.208Z",
+      "connector" : "lucid.fileupload",
+      "type" : "fileupload",
+      "pipeline" : "entities",
+      "parserId" : "entities-manual",
+      "properties" : {
+        "mediaType" : "text/csv",
+        "collection" : "entities",
+        "fileId" : "entities-manual.csv"
+      }
+    }, {
+      "id" : "upload-places-manual",
+      "created" : "2019-06-14T19:27:47.782Z",
+      "modified" : "2019-06-14T19:27:47.782Z",
+      "connector" : "lucid.fileupload",
+      "type" : "fileupload",
+      "pipeline" : "places-manual",
+      "parserId" : "places-manual",
+      "properties" : {
+        "mediaType" : "application/octet-stream",
+        "collection" : "places",
+        "fileId" : "places-manual.json"
+      }
+    } ]
+  },
+  "metadata" : {
+    "formatVersion" : "1",
+    "exportedBy" : "f1471a12-2e24-475f-80ca-babfdd0defd1",
+    "exportedDate" : "2019-06-14T21:09:20.872Z",
+    "fusionVersion" : "4.2.1",
+    "fusionGuid" : "5af4fde6-7a97-4eeb-b39c-3ff38f86b8ac"
+  }
+}

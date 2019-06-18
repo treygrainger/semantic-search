@@ -1,0 +1,22 @@
+id,surface_form,canonical_form,type,popularity,command_function
+1,near,"{location_distance}",command,90,"cmd_location_distance(query, position)"
+2,in,"{location_distance}",command,100,"cmd_location_distance(query, position)"
+3,by,"{location_distance}",command,90,"cmd_location_distance(query, position)"
+4,by,"{text_within_one_edit_distance}",10,"cmd_text_within_one_edit_distance(query, position)"
+5,near,"{text_distance}",command,10,"cmd_text_distance(query, position)"
+6,popular,{popular},command,100,"cmd_popularity(query, position)"
+7,top,{popular},command,100,"cmd_popularity(query, position)"
+8,best,{popular},command,100,"cmd_popularity(query, position)"
+9,good,{popular},command,100,"cmd_popularity(query, position)"
+10,violet,violet,color,100
+11,violet crowne,violet crowne,brand,100
+12,violet crowne charlottesville,violet crowne charlottesville,movie_theater,100
+13,violet crown,violet crowne,brand,100
+14,violet crown charlottesville,violet crowne charlottesville,movie_theater,100
+15,haystack,haystack conference,event,100
+16,haystack conf,haystack conference,event,100
+17,haystack conference,haystack conference,event,100
+18,heystack,haystack conference,event,100
+19,heystack conf,haystack conference,event,100
+20,heystack conference,haystack conference,event,100
+21,is,is,keyword,100

@@ -1,0 +1,9 @@
+{"requestHandler":{"/tag":{
+      "name":"/tag",
+      "class":"solr.TaggerRequestHandler",
+      "defaults":{"field":"name_tag"}},
+ "/semantic":{
+      "name":"/semantic",
+      "class":"solr.DumpRequestHandler",
+      "defaults":{"wt":"velocity", "v.template": "tag"}}}
+}
