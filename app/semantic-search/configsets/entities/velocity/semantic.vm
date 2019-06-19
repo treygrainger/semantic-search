@@ -89,7 +89,7 @@
     
   </style>
    
-  
+   
   
   <script type="text/javascript">
 
@@ -101,7 +101,7 @@
       
           $('#text').keyup(
             async function() {
-              this.latestAsyncRequestID = Math.random();
+              latestAsyncRequestID = Math.random();
               let userQuery = $('#text').val();
               await processQuery(userQuery, latestAsyncRequestID);
             }
