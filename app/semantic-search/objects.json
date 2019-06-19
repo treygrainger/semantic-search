@@ -1098,27 +1098,27 @@
       "linkType" : "relatesTo",
       "originator" : "unspecified"
     }, {
-      "subject" : "datasource:entities-geonames-cities",
+      "subject" : "datasource:upload-entities-geonames-cities",
       "object" : "app:semantic-search",
       "linkType" : "inContextOf",
       "originator" : "unspecified"
     }, {
-      "subject" : "datasource:entities-geonames-cities",
+      "subject" : "datasource:upload-entities-geonames-cities",
       "object" : "blob:centities-geonames-cities1000.zip",
       "linkType" : "dependsOn",
       "originator" : "unspecified"
     }, {
-      "subject" : "datasource:entities-geonames-cities",
+      "subject" : "datasource:upload-entities-geonames-cities",
       "object" : "collection:entities",
       "linkType" : "relatesTo",
       "originator" : "unspecified"
     }, {
-      "subject" : "datasource:entities-geonames-cities",
+      "subject" : "datasource:upload-entities-geonames-cities",
       "object" : "index-pipeline:geonames",
       "linkType" : "dependsOn",
       "originator" : "unspecified"
     }, {
-      "subject" : "datasource:entities-geonames-cities",
+      "subject" : "datasource:upload-entities-geonames-cities",
       "object" : "parser:geonames",
       "linkType" : "dependsOn",
       "originator" : "unspecified"
@@ -1347,7 +1347,7 @@
       }
     } ],
     "dataSources" : [  {
-      "id" : "entities-geonames-cities",
+      "id" : "upload-entities-geonames-cities",
       "created" : "2019-03-26T19:12:06.371Z",
       "modified" : "2019-03-26T19:12:06.371Z",
       "connector" : "lucid.fileupload",

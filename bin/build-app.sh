@@ -1,13 +1,11 @@
 #!/bin/bash
 #
-echo "Building Fusion App"
-endpath=$(basename "$(pwd)") 
-if [ $endpath = "bin" ]
-then
-  $(echo pwd; cd ../app/semantic-search/; zip -rv ../semantic-search.zip .* ;)  
-else
-  $(cd bin/ ; echo pwd; cd ../app/semantic-search/; zip -rv ../semantic-search.zip .* ;)	
-fi
+BIN_DIR="$(dirname "${BASH_SOURCE-$0}")"
+source "$BIN_DIR/myenv.sh"
 
-#zip -rv ../app/semantic-search.zip ../app/semantic-search
+echo "Building Fusion App"
+echo $BIN_DIR
+cd ${BIN_DIR}/../app/semantic-search/ 
+echo pwd
+zip -rv ../semantic-search.zip .* 
 echo "Fusion App ready for import in app/semantic-search.zip"
